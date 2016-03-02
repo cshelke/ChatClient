@@ -6,7 +6,7 @@ Use the server address and port-number as the two arguments to run this client.
 You can have multiple instances of this client to chat with one another.
 Once a client who has joined any chatroom enters a message, the message gets circulated to all members of the chatroom.
 Run this as:
-> java Client 52.36.79.34 49129
+> java -jar client.jar 52.36.79.34 49129
 
 Note: this has been built using Java 7.
 
