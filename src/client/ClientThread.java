@@ -1,6 +1,13 @@
 package client;
 
 import java.net.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import java.io.*;
 
 public class ClientThread extends Thread
@@ -38,7 +45,7 @@ public class ClientThread extends Thread
     	  //System.out.print("=> ");
     	  client.handle(streamIn.readUTF());
          }
-         catch(IOException ioe)
+         catch(IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ioe)
          {  System.out.println("Listening error: " + ioe.getMessage());
             client.stop();
          }

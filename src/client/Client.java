@@ -1,6 +1,8 @@
 package client;
 import java.net.*;
+import java.security.*;
 import java.io.*;
+import javax.crypto.*;
 
 public class Client implements Runnable
 {  
@@ -9,13 +11,14 @@ public class Client implements Runnable
    private DataInputStream  console   = null;
    private DataOutputStream streamOut = null;
    private ClientThread client    = null;
+   private Key key;
 
    public Client(String serverName, int serverPort)
    {  
 	  System.out.println("Establishing connection. Please wait ...");
       try
       {  
-    	  socket = new Socket(serverName, serverPort);
+    	  socket = new Socket("localhost", serverPort);
          System.out.println("Connected to Cyril's server: ");// + socket);
          System.out.println("<= Welcome to Cyril's chat server");
          System.out.println("<= Login Name?");
@@ -36,7 +39,7 @@ public class Client implements Runnable
    {  
 	   Client client = null;
       if (args.length != 2)
-    	  System.out.println("run as> java Client <port>");
+    	  System.out.println("run as> java Client <server> <port>");
       else
          client = new Client(args[0], Integer.parseInt(args[1]));
    }
@@ -47,10 +50,10 @@ public class Client implements Runnable
       {  
 	   try
          {  
-		   streamOut.writeUTF(console.readLine());
+		   streamOut.writeUTF(SecurityHandlerClient.encryptTheMessage(console.readLine(),this.key));
             streamOut.flush();
          }
-         catch(IOException ioe)
+         catch(IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException ioe)
          {  
         	 System.out.println("Sending error: " + ioe.getMessage());
             stop();
@@ -58,17 +61,29 @@ public class Client implements Runnable
       }
    }
    
-   public void handle(String msg)
+   public void handle(String msg) throws InvalidKeyException, 
+   NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
    {  
-	   String[] abc = msg.split(" ");
-	   
-	   if (abc[1].equals("/quit"))
-      {  
-		   System.out.println("Disconnected from the chat server");
-         stop();
-      }
-      else
-         System.out.println(msg);
+	   String[] sp = msg.split(" ");
+	   if(sp.length>=2) //initial message where the server sends the key (plain text)
+	   {
+		   if(sp[1].equals("/key"))
+		    	  this.key = SecurityHandlerClient.extractKey(sp[2]);
+	   }
+	   else // message is encrypted
+		 {
+		   String decryptedMsg = SecurityHandlerClient.decryptTheMessage(msg, this.key);
+		   String[] abc = decryptedMsg.split(" ");
+		   if (abc[1].equals("/quit"))
+	      {  
+			   System.out.println("Disconnected from the chat server");
+	         stop();
+	      }
+		   else
+		         System.out.println(decryptedMsg);
+		}
+      
+	   	
    }
    
    public void start() throws IOException
@@ -82,6 +97,7 @@ public class Client implements Runnable
          thread.start();
       }
    }
+   
    
    public void stop()
    {  
