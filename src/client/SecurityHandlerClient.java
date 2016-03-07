@@ -33,7 +33,7 @@ public class SecurityHandlerClient {
 	
 	public static Key extractKey(String encodedKey)
 	{
-		System.out.println("generating back the key: "+ encodedKey);
+		//System.out.println("generating back the key: "+ encodedKey);
 		byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
 		Key k = new SecretKeySpec(decodedKey,0, decodedKey.length,"AES");
 		
