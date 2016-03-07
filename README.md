@@ -69,6 +69,7 @@ Ron
 Disconnected from the chat server
 
 
+
 ADDED FEATURE - Security |
 
 Have provided basic symmetric key encryption using AES algorithm.
