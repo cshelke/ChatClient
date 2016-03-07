@@ -41,10 +41,14 @@ Ron
 Disconnected from the chat server
 
 
-ADDED FEATURE - Security
-Have provided basic symmetric key encryption using AES.
+ADDED FEATURE - Security |
+
+Have provided basic symmetric key encryption using AES algorithm.
+
 SecurityHandlerClient is the class which has methods related to encryption and decryption.
+
 Steps for implementing Security:
+
 1. When the server is powered up, a symmetric Key is generated as a private member of the Server.
 2. As the encryption is symmetric, the Server shares the key with client once the client connects to the already running server and the client saves this key.
 3. After the key is shared, if the client wants to send a message, the message will first be encrypted using the symmetric Key and then will be sent over the network.
